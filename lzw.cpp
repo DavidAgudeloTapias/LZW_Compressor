@@ -66,24 +66,43 @@ void decoding(const vector<int>& op, ostream& os) {
     }
 }
 
-int main() {
-    ifstream inputFile("input.txt");
-    ofstream outputFile("compressed_output.txt"), decodedFile("decoded_output.txt");
-
-    string s((istreambuf_iterator<char>(inputFile)), istreambuf_iterator<char>());
-    vector<int> output_code = encoding(s);
-
-    outputFile << "Output Codes are: ";
-    for (int code : output_code) {
-        outputFile << code << " ";
+int main(int argc, char** argv) {
+    if (argc != 2) {
+        cout << "Usage: " << argv[0] << " [mode]" << endl;
+        cout << "Modes:" << endl;
+        cout << "  compress   Compress the file." << endl;
+        cout << "  decompress Decompress the file." << endl;
+        return 1;
     }
-    outputFile << endl;
 
-    decoding(output_code, decodedFile);
+    string mode = argv[1];
+    ifstream inputFile("input.txt");
+
+    if (mode == "compress") {
+        ofstream outputFile("./compressed_files/compressed_output.txt");
+        string s((istreambuf_iterator<char>(inputFile)), istreambuf_iterator<char>());
+        vector<int> output_code = encoding(s);
+
+        for (int code : output_code) {
+            outputFile << code << " ";
+        }
+        outputFile.close();
+        cout << "Compression completed. Output written to compressed_output.txt" << endl;
+    } else if (mode == "decompress") {
+        ofstream decodedFile("decoded_output.txt");
+        vector<int> codes;
+        int temp;
+        while (inputFile >> temp) {
+            codes.push_back(temp);
+        }
+        decoding(codes, decodedFile);
+        decodedFile.close();
+        cout << "Decompression completed. Output written to decoded_output.txt" << endl;
+    } else {
+        cerr << "Invalid mode. Use 'compress' or 'decompress'." << endl;
+        return 1;
+    }
 
     inputFile.close();
-    outputFile.close();
-    decodedFile.close();
-
     return 0;
 }
