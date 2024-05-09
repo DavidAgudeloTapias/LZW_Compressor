@@ -67,8 +67,8 @@ void decoding(const vector<int>& op, ostream& os) {
 }
 
 int main(int argc, char** argv) {
-    if (argc != 2) {
-        cout << "Usage: " << argv[0] << " [mode]" << endl;
+    if (argc != 3) {
+        cout << "Usage: " << argv[0] << " [mode] [file]" << endl;
         cout << "Modes:" << endl;
         cout << "  compress   Compress the file." << endl;
         cout << "  decompress Decompress the file." << endl;
@@ -76,7 +76,12 @@ int main(int argc, char** argv) {
     }
 
     string mode = argv[1];
-    ifstream inputFile("input.txt");
+    string filename = argv[2];
+    ifstream inputFile(filename);
+    if (!inputFile.is_open()) {
+        cerr << "Error opening file: " << filename << endl;
+        return 1;
+    }
 
     if (mode == "compress") {
         ofstream outputFile("./compressed_files/compressed_output.txt");
